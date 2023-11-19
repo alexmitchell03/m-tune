@@ -11,4 +11,4 @@ Adjust the slider until you think you have matched the Goal/Objective frequency 
 the "confirm" button. 
 
 If you matched the frequency desired, good job!
-If not, you will be prompted with how much you were off by!
+If not, you will be prompted with how much you were off by.
