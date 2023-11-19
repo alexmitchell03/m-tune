@@ -35,6 +35,16 @@ button:active {
   margin-left: -650px;
 }
 
+.slider-container2 {
+  height: 300px; /* Set the height of the container */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: rotate(-90deg); /* Rotate the container */
+  margin-top: 100px;
+  margin-left: -650px;
+}
+
 .slider {
   -webkit-appearance: none; /* Remove default styles */
   appearance: none;

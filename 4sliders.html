@@ -8,7 +8,7 @@
 <body>
     <h1>Tune the Orchestra</h1>
     <h2>Given a note to find, put the slider in tune with the note</h2>
-    <div class="slider-container">
+    <div class="slider-container2">
         <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider1" orient="vertical" step="10">
         <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider2" orient="vertical" step="10">
         <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider3" orient="vertical" step="10">
@@ -175,7 +175,7 @@
 
         function playAudio1() {
             if (!audioSource1) {
-                const audioFilePath = '/Alesis-Fusion-Violin-C5.wav'; // Replace with the path to your .wav file
+                const audioFilePath = 'wav/Alesis-Fusion-Violin-C5.wav'; // Replace with the path to your .wav file
                 const audioBufferSourceNode = audioContext.createBufferSource();
 
                 // Fetch the audio file
@@ -227,7 +227,7 @@
 
         function playAudio2() {
             if (!audioSource2) {
-                const audioFilePath = '/Alesis-S4-Plus-SopranoSax-C5.wav'; // Replace with the path to your .wav file
+                const audioFilePath = 'wav/Alesis-S4-Plus-SopranoSax-C5.wav'; // Replace with the path to your .wav file
                 const audioBufferSourceNode = audioContext.createBufferSource();
 
                 // Fetch the audio file
@@ -279,7 +279,7 @@
 
         function playAudio3() {
             if (!audioSource3) {
-                const audioFilePath = '/E-Mu-Proteus-2-Flute-C5.wav'; // Replace with the path to your .wav file
+                const audioFilePath = 'wav/E-Mu-Proteus-2-Flute-C5.wav'; // Replace with the path to your .wav file
                 const audioBufferSourceNode = audioContext.createBufferSource();
 
                 // Fetch the audio file
@@ -352,7 +352,7 @@
 
         function playAudio4() {
             if (!audioSource4) {
-                const audioFilePath = '/Ensoniq-SQ-1-Trumpet-C3.wav'; // Replace with the path to your .wav file
+                const audioFilePath = 'wav/Ensoniq-SQ-1-Trumpet-C3.wav'; // Replace with the path to your .wav file
                 const audioBufferSourceNode = audioContext.createBufferSource();
 
                 // Fetch the audio file
@@ -424,6 +424,7 @@
         }
 
         function checkPitch() {
+            let correct = 0;
             const playButton = document.getElementById('playButton');
             const stopButton = document.getElementById('stopButton');
             const pitchButton = document.getElementById('pitchButton');
@@ -440,10 +441,8 @@
                 const differenceCents1 = Math.abs(1200 * Math.log2(initialFrequency1 / randomGoalFrequency1)); // Calculate difference in cents
 
                 if (Math.abs(randomGoalFrequency1 - initialFrequency1) <= 0.4) {
-                    resultDiv1.textContent = 'Correct! You have a good ear!';
-                } else {
-                    resultDiv1.textContent = `Incorrect. You were off by approximately ${differenceCents1.toFixed(2)} cents.`;
-                }
+                    count = count + 1;
+                } 
 
                 const cents2 = parseFloat(pitchSlider2.value);
                 const frequencyMultiplier2 = Math.pow(2, cents2 / 1200); // Convert slider position to frequency multiplier
@@ -457,9 +456,7 @@
                 const differenceCents2 = Math.abs(1200 * Math.log2(initialFrequency2 / randomGoalFrequency2)); // Calculate difference in cents
 
                 if (Math.abs(randomGoalFrequency2 - initialFrequency2) <= 0.4) {
-                    resultDiv2.textContent = 'Correct! You have a good ear!';
-                } else {
-                    resultDiv2.textContent = `Incorrect. You were off by approximately ${differenceCents2.toFixed(2)} cents.`;
+                    count = count + 1;
                 }
 
                 const cents3 = parseFloat(pitchSlider3.value);
@@ -474,9 +471,7 @@
                 const differenceCents3 = Math.abs(1200 * Math.log2(initialFrequency3 / randomGoalFrequency3)); // Calculate difference in cents
 
                 if (Math.abs(randomGoalFrequency3 - initialFrequency3) <= 0.4) {
-                    resultDiv3.textContent = 'Correct! You have a good ear!';
-                } else {
-                    resultDiv3.textContent = `Incorrect. You were off by approximately ${differenceCents3.toFixed(2)} cents.`;
+                    count = count + 1;
                 }
 
                 const cents4 = parseFloat(pitchSlider4.value);
@@ -491,17 +486,26 @@
                 const differenceCents4 = Math.abs(1200 * Math.log2(initialFrequency4 / randomGoalFrequency4)); // Calculate difference in cents
 
                 if (Math.abs(randomGoalFrequency4 - initialFrequency4) <= 0.4) {
-                    resultDiv4.textContent = 'Correct! You have a good ear!';
+                    count = count + 1;
+                    if (count == 4) {
+                        resultDiv4.textContent = 'Correct! You have a good ear!';
+                    }
                 } else {
-                    resultDiv4.textContent = `Incorrect. You were off by approximately ${differenceCents4.toFixed(2)} cents.`;
+                    let diff = 4 - count;
+                    resultDiv4.textContent = `Incorrect. You were off on ${diff} cents.`;
                 }
-
                 setTimeout(generateNewPitch, 3000);
                 stopAudio1();
+                stopAudio2();
+                stopAudio3();
+                stopAudio4();
                 playButton.style.display = 'none'; // Show the Play button after mode selection
                 stopButton.style.display = 'none';
                 pitchButton.style.display = 'none';
-                pitchSlider.value = 0;
+                pitchSlider1.value = 0;
+                pitchSlider2.value = 0;
+                pitchSlider3.value = 0;
+                pitchSlider4.value = 0;
             }
         }
 
