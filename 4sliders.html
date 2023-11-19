@@ -51,7 +51,19 @@
         <button onclick="setMode('easy')">Easy Mode</button>
         <button onclick="setMode('medium')">Medium Mode</button>
         <button onclick="setMode('hard')">Hard Mode</button>
-        <button onclick="checkPitch()">Check Pitch</button> Button for checking user's pitch
+        <br>
+        <br>
+        <button id="playButton1" style="display: none;" style="padding-top: 30px;" onclick="playAudio1()">Play Note</button>
+        <button id="stopButton1" style="display: none;" style="padding-top: 30px;" onclick="stopAudio1()">Stop Note</button>
+        <button id="playButton2" style="display: none;" style="padding-top: 30px;" onclick="playAudio2()">Play Note</button>
+        <button id="stopButton2" style="display: none;" style="padding-top: 30px;" onclick="stopAudio2()">Stop Note</button>
+        <button id="playButton3" style="display: none;" style="padding-top: 30px;" onclick="playAudio3()">Play Note</button>
+        <button id="stopButton3" style="display: none;" style="padding-top: 30px;" onclick="stopAudio3()">Stop Note</button>
+        <button id="playButton4" style="display: none;" style="padding-top: 30px;" onclick="playAudio4()">Play Note</button>
+        <button id="stopButton4" style="display: none;" style="padding-top: 30px;" onclick="stopAudio4()">Stop Note</button>
+        <button id="pitchButton" style="display: none;" onclick="checkPitch()">Check Pitch</button>
+        <br>
+        <br>
         <div id="result"></div>
     </div>
     <!-- <div id="spinner"></div> -->
@@ -66,19 +78,19 @@
 
         // Calculate a random goal pitch within the G3 to G5 range
         const randomGoalNote1 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-        const randomGoalFrequency1 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+        const randomGoalFrequency1 = basePitch * Math.pow(2, randomGoalNote1 / 12); // Corresponding frequency
         const randomGoalNote2 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-        const randomGoalFrequency2 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+        const randomGoalFrequency2 = basePitch * Math.pow(2, randomGoalNote2 / 12); // Corresponding frequency
         const randomGoalNote3 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-        const randomGoalFrequency3 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+        const randomGoalFrequency3 = basePitch * Math.pow(2, randomGoalNote3 / 12); // Corresponding frequency
         const randomGoalNote4 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-        const randomGoalFrequency4 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+        const randomGoalFrequency4 = basePitch * Math.pow(2, randomGoalNote4 / 12); // Corresponding frequency
 
         // Calculate an initial pitch within ±50 cents from the goal pitch
-        const randomInitPitch1 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
-        const randomInitPitch2 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
-        const randomInitPitch3 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
-        const randomInitPitch4 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+        const randomInitPitch1 = randomGoalFrequency1 * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+        const randomInitPitch2 = randomGoalFrequency1 * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+        const randomInitPitch3 = randomGoalFrequency1 * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+        const randomInitPitch4 = randomGoalFrequency1 * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
 
         function hertzToNote(hertz) {
             const notes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
@@ -93,56 +105,71 @@
         }
 
         function setMode(mode) {
-            const pitchSlider1 = document1.getElementById('pitchSlider1');
-            const pitchValueDisplay1 = document1.getElementById('pitchValue1');
-            const pitchSlider2 = document2.getElementById('pitchSlider2');
-            const pitchValueDisplay2 = document2.getElementById('pitchValue2');
-            const pitchSlider3 = document3.getElementById('pitchSlider3');
-            const pitchValueDisplay3 = document3.getElementById('pitchValue3');
-            const pitchSlider4 = document4.getElementById('pitchSlider4');
-            const pitchValueDisplay4 = document4.getElementById('pitchValue4');
-            const basePitch = 196.00; //G3 frequency
-            const randomGoalNote1 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-            const randomGoalFrequency1 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
-            const randomGoalNote2 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-            const randomGoalFrequency2 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
-            const randomGoalNote3 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-            const randomGoalFrequency3 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
-            const randomGoalNote4 = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-            const randomGoalFrequency4 = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
-            let initialPitch1 = 0;
-            let initialPitch2 = 0;
-            let initialPitch3 = 0;
-            let initialPitch4 = 0;
+            const playButton = document.getElementById('playButton');
+            const stopButton = document.getElementById('stopButton');
+            const pitchButton = document.getElementById('pitchButton');
 
             if (mode === 'easy') {
-                initialPitch1 = randomGoalFrequency * Math.pow(2, ((Math.random() * 10) - 5) / 120); // Multiple of 10 off the goal pitch
-                pitchSlider1.step = '10'; // Set step to 10 for easy mode
-                initialPitch2 = randomGoalFrequency * Math.pow(2, ((Math.random() * 10) - 5) / 120); // Multiple of 10 off the goal pitch
-                pitchSlider2.step = '10'; // Set step to 10 for easy mode
-                initialPitch3 = randomGoalFrequency * Math.pow(2, ((Math.random() * 10) - 5) / 120); // Multiple of 10 off the goal pitch
-                pitchSlider3.step = '10'; // Set step to 10 for easy mode
-                initialPitch4 = randomGoalFrequency * Math.pow(2, ((Math.random() * 10) - 5) / 120); // Multiple of 10 off the goal pitch
-                pitchSlider4.step = '10'; // Set step to 10 for easy mode
-            } else if (mode === 'hard') {
-                initialPitch1 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200); // Original logic for hard mode
+                const centsDifference1 = Math.round(Math.log2(randomInitPitch1 / randomGoalFrequency1) * 1200);
+                const roundedCentsDifference1 = Math.round(centsDifference1 / 10) * 10;
+                const adjustedRandomInitPitch1 = randomGoalFrequency1 * Math.pow(2, (roundedCentsDifference1 / 1200));
+                randomInitPitch1 = adjustedRandomInitPitch1;
+                pitchSlider1.step = '10'; // Set step to 10 for easy mode 
+                const centsDifference2 = Math.round(Math.log2(randomInitPitch2 / randomGoalFrequency2) * 1200);
+                const roundedCentsDifference2 = Math.round(centsDifference2 / 10) * 10;
+                const adjustedRandomInitPitch2 = randomGoalFrequency2 * Math.pow(2, (roundedCentsDifference2 / 1200));
+                randomInitPitch2 = adjustedRandomInitPitch2;
+                pitchSlider2.step = '10'; // Set step to 10 for easy mode 
+                const centsDifference3 = Math.round(Math.log2(randomInitPitch3 / randomGoalFrequency3) * 1200);
+                const roundedCentsDifference3 = Math.round(centsDifference3 / 10) * 10;
+                const adjustedRandomInitPitch3 = randomGoalFrequency3 * Math.pow(2, (roundedCentsDifference3 / 1200));
+                randomInitPitch3 = adjustedRandomInitPitch3;
+                pitchSlider3.step = '10'; // Set step to 10 for easy mode 
+                const centsDifference4 = Math.round(Math.log2(randomInitPitch4 / randomGoalFrequency4) * 1200);
+                const roundedCentsDifference4 = Math.round(centsDifference4 / 10) * 10;
+                const adjustedRandomInitPitch4 = randomGoalFrequency4 * Math.pow(2, (roundedCentsDifference4 / 1200));
+                randomInitPitch4 = adjustedRandomInitPitch4;
+                pitchSlider4.step = '10'; // Set step to 10 for easy mode 
+            }
+            else if (mode == 'medium') {
+                const centsDifference1 = Math.round(Math.log2(randomInitPitch1 / randomGoalFrequency1) * 1200);
+                const roundedCentsDifference1 = Math.round(centsDifference1 / 5) * 5;
+                const adjustedRandomInitPitch1 = randomGoalFrequency1 * Math.pow(2, (roundedCentsDifference1 / 1200));
+                randomInitPitch1 = adjustedRandomInitPitch1;
+                pitchSlider1.step = '5'; 
+                const centsDifference2 = Math.round(Math.log2(randomInitPitch2 / randomGoalFrequency2) * 1200);
+                const roundedCentsDifference2 = Math.round(centsDifference2 / 5) * 5;
+                const adjustedRandomInitPitch2 = randomGoalFrequency2 * Math.pow(2, (roundedCentsDifference2 / 1200));
+                randomInitPitch2 = adjustedRandomInitPitch2;
+                pitchSlider2.step = '5'; 
+                const centsDifference3 = Math.round(Math.log2(randomInitPitch3 / randomGoalFrequency3) * 1200);
+                const roundedCentsDifference3 = Math.round(centsDifference3 / 5) * 5;
+                const adjustedRandomInitPitch3 = randomGoalFrequency3 * Math.pow(2, (roundedCentsDifference3 / 1200));
+                randomInitPitch3 = adjustedRandomInitPitch3;
+                pitchSlider3.step = '5'; 
+                const centsDifference4 = Math.round(Math.log2(randomInitPitch4 / randomGoalFrequency4) * 1200);
+                const roundedCentsDifference4 = Math.round(centsDifference4 / 5) * 5;
+                const adjustedRandomInitPitch4 = randomGoalFrequency4 * Math.pow(2, (roundedCentsDifference4 / 1200));
+                randomInitPitch4 = adjustedRandomInitPitch4;
+                pitchSlider4.step = '5'; 
+            }
+            else if (mode === 'hard') {
+                randomInitPitch1 = randomGoalFrequency1 * Math.pow(2, ((Math.random() * 50) - 50) / 1200);
                 pitchSlider1.step = '1'; // Set step to 1 for hard mode
-                initialPitch2 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200); // Original logic for hard mode
+                randomInitPitch2 = randomGoalFrequency2 * Math.pow(2, ((Math.random() * 50) - 50) / 1200);
                 pitchSlider2.step = '1'; // Set step to 1 for hard mode
-                initialPitch3 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200); // Original logic for hard mode
+                randomInitPitch3 = randomGoalFrequency3 * Math.pow(2, ((Math.random() * 50) - 50) / 1200);
                 pitchSlider3.step = '1'; // Set step to 1 for hard mode
-                initialPitch4 = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200); // Original logic for hard mode
+                randomInitPitch4 = randomGoalFrequency4 * Math.pow(2, ((Math.random() * 50) - 50) / 1200);
                 pitchSlider4.step = '1'; // Set step to 1 for hard mode
             }
-
-            pitchSlider1.value = ((Math.log2(initialPitch / randomGoalFrequency)) * 1200).toFixed(2);
-            pitchValueDisplay1.textContent = pitchSlider1.value;
-            pitchSlider2.value = ((Math.log2(initialPitch / randomGoalFrequency)) * 1200).toFixed(2);
-            pitchValueDisplay2.textContent = pitchSlider2.value;
-            pitchSlider3.value = ((Math.log2(initialPitch / randomGoalFrequency)) * 1200).toFixed(2);
-            pitchValueDisplay3.textContent = pitchSlider3.value;
-            pitchSlider4.value = ((Math.log2(initialPitch / randomGoalFrequency)) * 1200).toFixed(2);
-            pitchValueDisplay4.textContent = pitchSlider4.value;
+            playButton.style.display = 'inline-block'; // Show the Play button after mode selection
+            stopButton.style.display = 'inline-block';
+            pitchButton.style.display = 'inline-block';
+            updatePitch1(randomInitPitch1);
+            updatePitch2(randomInitPitch2);
+            updatePitch3(randomInitPitch3);
+            updatePitch4(randomInitPitch4);
         }
 
 
@@ -171,19 +198,21 @@
                 const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
 
                 const initialFrequency = randomInitPitch1 * frequencyMultiplier;
+                if (!isNaN(initialFrequency) && isFinite(initialFrequency)) {
+                    audioSource1.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                    pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
 
-                oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
-                pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
+                    const goalPitchDiv = document.getElementById('goalPitch1');
+                    const goalPitchDiv2 = document.getElementById('goalPitch1-2');
+                    const noteRepresentation = hertzToNote(randomGoalFrequency1);
+                    goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                    goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency1.toFixed(2) + ' Hz';
+                    
+                    const currentPitchDiv = document.getElementById('currentPitch1');
+                    const currentFrequency = initialFrequency.toFixed(2);
+                    currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                }
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const goalPitchDiv2 = document.getElementById('goalPitch2');
-                const noteRepresentation = hertzToNote(randomGoalFrequency1);
-                goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
-                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency1.toFixed(2) + ' Hz';
-                
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const currentFrequency = initialFrequency.toFixed(2);
-                currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
             }
         }
 
@@ -192,27 +221,7 @@
                 audioSource1.stop();
                 audioSource1.disconnect();
                 audioSource1 = null;
-            }
-        }
-
-        function checkPitch1() {
-            if (audioSource1) {
-                const cents = parseFloat(pitchSlider1.value);
-                const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
-
-                const initialFrequency = randomInitPitch1 * frequencyMultiplier;
-
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const resultDiv = document.getElementById('result');
-
-                const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency1)); // Calculate difference in cents
-
-                if (Math.abs(randomGoalFrequency1 - initialFrequency) <= 0.4) {
-                    resultDiv.textContent = 'Correct! You have a good ear!';
-                } else {
-                    resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
-                }
+                pitchSlider1.removeEventListener('input', updatePitch1); // Remove event listener
             }
         }
 
@@ -242,18 +251,20 @@
 
                 const initialFrequency = randomInitPitch2 * frequencyMultiplier;
 
-                oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
-                pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
+                if (!isNaN(initialFrequency) && isFinite(initialFrequency)) {
+                    audioSource2.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                    pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const goalPitchDiv2 = document.getElementById('goalPitch2');
-                const noteRepresentation = hertzToNote(randomGoalFrequency2);
-                goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
-                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency2.toFixed(2) + ' Hz';
-                
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const currentFrequency = initialFrequency.toFixed(2);
-                currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                    const goalPitchDiv = document.getElementById('goalPitch2');
+                    const goalPitchDiv2 = document.getElementById('goalPitch2-2');
+                    const noteRepresentation = hertzToNote(randomGoalFrequency2);
+                    goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                    goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency2.toFixed(2) + ' Hz';
+                    
+                    const currentPitchDiv = document.getElementById('currentPitch2');
+                    const currentFrequency = initialFrequency.toFixed(2);
+                    currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                }
             }
         }
 
@@ -262,27 +273,7 @@
                 audioSource2.stop();
                 audioSource2.disconnect();
                 audioSource2 = null;
-            }
-        }
-
-        function checkPitch2() {
-            if (audioSource2) {
-                const cents = parseFloat(pitchSlider2.value);
-                const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
-
-                const initialFrequency = randomInitPitch2 * frequencyMultiplier;
-
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const resultDiv = document.getElementById('result');
-
-                const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency2)); // Calculate difference in cents
-
-                if (Math.abs(randomGoalFrequency2 - initialFrequency) <= 0.4) {
-                    resultDiv.textContent = 'Correct! You have a good ear!';
-                } else {
-                    resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
-                }
+                pitchSlider2.removeEventListener('input', updatePitch2); // Remove event listener
             }
         }
 
@@ -312,18 +303,20 @@
 
                 const initialFrequency = randomInitPitch3 * frequencyMultiplier;
 
-                oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
-                pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
+                if (!isNaN(initialFrequency) && isFinite(initialFrequency)) {
+                    audioSource3.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                    pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const goalPitchDiv2 = document.getElementById('goalPitch2');
-                const noteRepresentation = hertzToNote(randomGoalFrequency3);
-                goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
-                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency3.toFixed(2) + ' Hz';
-                
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const currentFrequency = initialFrequency.toFixed(2);
-                currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                    const goalPitchDiv = document.getElementById('goalPitch3');
+                    const goalPitchDiv2 = document.getElementById('goalPitch3-2');
+                    const noteRepresentation = hertzToNote(randomGoalFrequency3);
+                    goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                    goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency3.toFixed(2) + ' Hz';
+                    
+                    const currentPitchDiv = document.getElementById('currentPitch3');
+                    const currentFrequency = initialFrequency.toFixed(2);
+                    currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                }
             }
         }
 
@@ -332,6 +325,7 @@
                 audioSource3.stop();
                 audioSource3.disconnect();
                 audioSource3 = null;
+                pitchSlider3.removeEventListener('input', updatePitch3); // Remove event listener
             }
         }
 
@@ -342,8 +336,8 @@
 
                 const initialFrequency = randomInitPitch3 * frequencyMultiplier;
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const currentPitchDiv = document.getElementById('currentPitch');
+                const goalPitchDiv = document.getElementById('goalPitch3');
+                const currentPitchDiv = document.getElementById('currentPitch3');
                 const resultDiv = document.getElementById('result');
 
                 const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency3)); // Calculate difference in cents
@@ -382,18 +376,20 @@
 
                 const initialFrequency = randomInitPitch4 * frequencyMultiplier;
 
-                oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
-                pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
+                if (!isNaN(initialFrequency) && isFinite(initialFrequency)) {
+                    audioSource4.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                    pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const goalPitchDiv2 = document.getElementById('goalPitch2');
-                const noteRepresentation = hertzToNote(randomGoalFrequency4);
-                goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
-                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency4.toFixed(2) + ' Hz';
-                
-                const currentPitchDiv = document.getElementById('currentPitch');
-                const currentFrequency = initialFrequency.toFixed(2);
-                currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                    const goalPitchDiv = document.getElementById('goalPitch4');
+                    const goalPitchDiv2 = document.getElementById('goalPitch4-2');
+                    const noteRepresentation = hertzToNote(randomGoalFrequency4);
+                    goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                    goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency4.toFixed(2) + ' Hz';
+                    
+                    const currentPitchDiv = document.getElementById('currentPitch4');
+                    const currentFrequency = initialFrequency.toFixed(2);
+                    currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                }
             }
         }
 
@@ -402,6 +398,7 @@
                 audioSource4.stop();
                 audioSource4.disconnect();
                 audioSource4 = null;
+                pitchSlider4.removeEventListener('input', updatePitch4); // Remove event listener
             }
         }
 
@@ -412,8 +409,8 @@
 
                 const initialFrequency = randomInitPitch4 * frequencyMultiplier;
 
-                const goalPitchDiv = document.getElementById('goalPitch');
-                const currentPitchDiv = document.getElementById('currentPitch');
+                const goalPitchDiv = document.getElementById('goalPitch4');
+                const currentPitchDiv = document.getElementById('currentPitch4');
                 const resultDiv = document.getElementById('result');
 
                 const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency4)); // Calculate difference in cents
@@ -423,6 +420,88 @@
                 } else {
                     resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
                 }
+            }
+        }
+
+        function checkPitch() {
+            const playButton = document.getElementById('playButton');
+            const stopButton = document.getElementById('stopButton');
+            const pitchButton = document.getElementById('pitchButton');
+            if (audioSource1 && audioSource2 && audioSource3 && audioSource4) {
+                const cents1 = parseFloat(pitchSlider1.value);
+                const frequencyMultiplier1 = Math.pow(2, cents1 / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency1 = randomInitPitch1 * frequencyMultiplier1;
+
+                const goalPitchDiv1 = document.getElementById('goalPitch1');
+                const currentPitchDiv1 = document.getElementById('currentPitch1');
+                const resultDiv1 = document.getElementById('result');
+
+                const differenceCents1 = Math.abs(1200 * Math.log2(initialFrequency1 / randomGoalFrequency1)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency1 - initialFrequency1) <= 0.4) {
+                    resultDiv1.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv1.textContent = `Incorrect. You were off by approximately ${differenceCents1.toFixed(2)} cents.`;
+                }
+
+                const cents2 = parseFloat(pitchSlider2.value);
+                const frequencyMultiplier2 = Math.pow(2, cents2 / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency2 = randomInitPitch2 * frequencyMultiplier2;
+
+                const goalPitchDiv2 = document.getElementById('goalPitch2');
+                const currentPitchDiv2 = document.getElementById('currentPitch2');
+                const resultDiv2 = document.getElementById('result');
+
+                const differenceCents2 = Math.abs(1200 * Math.log2(initialFrequency2 / randomGoalFrequency2)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency2 - initialFrequency2) <= 0.4) {
+                    resultDiv2.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv2.textContent = `Incorrect. You were off by approximately ${differenceCents2.toFixed(2)} cents.`;
+                }
+
+                const cents3 = parseFloat(pitchSlider3.value);
+                const frequencyMultiplier3 = Math.pow(2, cents3 / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency3 = randomInitPitch3 * frequencyMultiplier3;
+
+                const goalPitchDiv3 = document.getElementById('goalPitch3');
+                const currentPitchDiv3 = document.getElementById('currentPitch3');
+                const resultDiv3 = document.getElementById('result');
+
+                const differenceCents3 = Math.abs(1200 * Math.log2(initialFrequency3 / randomGoalFrequency3)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency3 - initialFrequency3) <= 0.4) {
+                    resultDiv3.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv3.textContent = `Incorrect. You were off by approximately ${differenceCents3.toFixed(2)} cents.`;
+                }
+
+                const cents4 = parseFloat(pitchSlider4.value);
+                const frequencyMultiplier4 = Math.pow(2, cents4 / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency4 = randomInitPitch4 * frequencyMultiplier4;
+
+                const goalPitchDiv4 = document.getElementById('goalPitch4');
+                const currentPitchDiv4 = document.getElementById('currentPitch4');
+                const resultDiv4 = document.getElementById('result');
+
+                const differenceCents4 = Math.abs(1200 * Math.log2(initialFrequency4 / randomGoalFrequency4)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency4 - initialFrequency4) <= 0.4) {
+                    resultDiv4.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv4.textContent = `Incorrect. You were off by approximately ${differenceCents4.toFixed(2)} cents.`;
+                }
+
+                setTimeout(generateNewPitch, 3000);
+                stopAudio1();
+                playButton.style.display = 'none'; // Show the Play button after mode selection
+                stopButton.style.display = 'none';
+                pitchButton.style.display = 'none';
+                pitchSlider.value = 0;
             }
         }
 
