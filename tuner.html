@@ -6,10 +6,11 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Find the Pitch</h1>
+    <h1 class="thing">Tuning Training: Find the Pitch</h1>
     <h2>Given a note to find, put the slider in tune with the note</h2>
+    <a href="pitch1.html"><button>Perfect Pitch Trainer</button></a>
     <div class="slider-container">
-        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider" orient="vertical">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider" orient="vertical" step="10">
         <div id="notches"></div>
     </div>
     <div class="pitch-container">
@@ -29,6 +30,10 @@
         <br>
         <br>
         <div id="result"></div>
+        <div>
+            <img src="images/Block_M-Hex.png" alt="Block M" width="100px" height="70px">
+            <span class="thing2" >TUNE</span>
+        </div>
     </div>
     <!-- <div id="spinner"></div> -->
 

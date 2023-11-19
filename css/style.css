@@ -85,14 +85,18 @@ button:active {
 
 
 h1 {
-  font-size: 40px;
+  font-size: 30px;
   /* font-family: 'IBM Plex Serif Condensed'; */
   text-align: right;
   margin-left: 65px;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  margin-right: 560px;
+  margin-right: 298px;
 
   /* font-family: ui-sans-serif,system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji; */
+}
+
+.thing {
+  margin-right: 386px;
 }
 
 h2 {
@@ -124,4 +128,16 @@ body {
 div {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: bold;
+}
+
+.thing2 {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: bold;
+  font-size: 100px;
+  padding: 10px;
+  color: #00274C;
+}
+
+img {
+  margin-top: 70px;
 }
