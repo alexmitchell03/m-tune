@@ -17,8 +17,8 @@
         <span id="pitchValue">0</span> Cents
         <br>
         <div id="goalPitch">Goal Pitch</div>
-        <div id="goalPitch2">Real Goal Pitch</div>
-        <div id="currentPitch">Current Pitch</div>
+        <!-- <div id="goalPitch2">Real Goal Pitch</div> -->
+        <!-- <div id="currentPitch">Current Pitch</div> -->
         <button onclick="setMode('easy')">Easy Mode</button>
         <button onclick="setMode('medium')">Medium Mode</button>
         <button onclick="setMode('hard')">Hard Mode</button>
@@ -44,8 +44,8 @@
         let pitchValueDisplay = document.getElementById('pitchValue');
         const basePitch = 196.00; // G3 frequency
         let goalPitchDiv = document.getElementById('goalPitch');
-        let goalPitchDiv2 = document.getElementById('goalPitch2');
-        let currentPitchDiv = document.getElementById('currentPitch');
+        // let goalPitchDiv2 = document.getElementById('goalPitch2');
+        // let currentPitchDiv = document.getElementById('currentPitch');
         let resultDiv = document.getElementById('result');
         let randomGoalFrequency = 0; // Define randomGoalFrequency here
         let randomInitPitch = 0;
@@ -113,9 +113,9 @@
                 pitchValueDisplay.textContent = calculateCentsDifference(initialFrequency, randomGoalFrequency) + " Cents";
 
                 goalPitchDiv.textContent = 'Goal Pitch: ' + hertzToNote(randomGoalFrequency);
-                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency.toFixed(2) + ' Hz';
+                // goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency.toFixed(2) + ' Hz';
 
-                currentPitchDiv.textContent = 'Current Pitch: ' + initialFrequency.toFixed(2) + ' Hz';
+                // currentPitchDiv.textContent = 'Current Pitch: ' + initialFrequency.toFixed(2) + ' Hz';
             }
         }
 
@@ -158,7 +158,7 @@
                 const initialFrequency = randomInitPitch * frequencyMultiplier;
 
                 const goalPitchDiv = document.getElementById('goalPitch');
-                const currentPitchDiv = document.getElementById('currentPitch');
+                // const currentPitchDiv = document.getElementById('currentPitch');
                 const resultDiv = document.getElementById('result');
 
                 const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency)); // Calculate difference in cents
