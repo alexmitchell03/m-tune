@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sine Wave Player with Pitch Slider</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Find the Pitch</h1>
+    <h2>Given a note to find, put the slider in tune with the note</h2>
+    <div class="slider-container">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider" orient="vertical" step="10">
+    </div>
+    <div class="pitch-container">
+        <span id="pitchValue">0</span> Cents
+        <br>
+        <div id="goalPitch">Goal Pitch</div>
+        <div id="goalPitch2">Real Goal Pitch</div>
+        <div id="currentPitch">Current Pitch</div>
+        <button onclick="setMode('easy')">Easy Mode</button>
+        <button onclick="setMode('medium')">Medium Mode</button>
+        <button onclick="setMode('hard')">Hard Mode</button>
+        <br>
+        <br>
+        <button id="playButton" style="display: none;" style="padding-top: 30px;" onclick="playSineWave()">Play Note</button>
+        <button id="stopButton" style="display: none;" style="padding-top: 30px;" onclick="stopSineWave()">Stop Note</button>
+        <button id="pitchButton" style="display: none;" onclick="checkPitch()">Check Pitch</button> <!-- Button for checking user's pitch -->
+        <div id="result"></div>
+    </div>
+    <!-- <div id="spinner"></div> -->
+
+    <script>    
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let oscillator = null;
+        let pitchSlider = document.getElementById('pitchSlider');
+        let pitchValueDisplay = document.getElementById('pitchValue');
+        const basePitch = 196.00; //G3 frequency
+
+        // Calculate a random goal pitch within the G3 to G5 range
+        const randomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
+        const randomGoalFrequency = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+
+        // Calculate an initial pitch within ±50 cents from the goal pitch
+        let randomInitPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+
+        function hertzToNote(hertz) {
+            const notes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+            const HERTZOFC0 = 16.35; // Lowest C note (C0) frequency in Hz
+            const OCTAVE_OFFSET = 0; // Starting octave number for representation (adjust as needed)
+
+            const halfSteps = Math.round(12 * Math.log2(hertz / HERTZOFC0));
+            const octave = Math.floor((halfSteps + 3) / 12) + OCTAVE_OFFSET;
+            const note = notes[(halfSteps + 3) % 12];
+
+            return note + octave;
+        }
+
+        function setMode(mode) {
+            const playButton = document.getElementById('playButton');
+            const stopButton = document.getElementById('stopButton');
+            const pitchButton = document.getElementById('pitchButton');
+
+            if (mode === 'easy') {
+                const centsDifference = Math.round(Math.log2(randomInitPitch / randomGoalFrequency) * 1200);
+                const roundedCentsDifference = Math.round(centsDifference / 10) * 10;
+                const adjustedRandomInitPitch = randomGoalFrequency * Math.pow(2, (roundedCentsDifference / 1200));
+                randomInitPitch = adjustedRandomInitPitch;
+                pitchSlider.step = '10'; // Set step to 10 for easy mode
+            }
+            else if (mode == 'medium') {
+                const centsDifference = Math.round(Math.log2(randomInitPitch / randomGoalFrequency) * 1200);
+                const roundedCentsDifference = Math.round(centsDifference / 5) * 5;
+                const adjustedRandomInitPitch = randomGoalFrequency * Math.pow(2, (roundedCentsDifference / 1200));
+                randomInitPitch = adjustedRandomInitPitch;
+                pitchSlider.step = '5';
+            }
+            else if (mode === 'hard') {
+                randomInitPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+                pitchSlider.step = '1'; // Set step to 1 for hard mode
+            }
+
+            playButton.style.display = 'inline-block'; // Show the Play button after mode selection
+            stopButton.style.display = 'inline-block';
+            pitchButton.style.display = 'inline-block';
+            updatePitch(randomInitPitch);
+        }
+
+        function playSineWave() {
+            if (!oscillator) {
+                oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+
+                updatePitch(randomInitPitch);
+
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+
+                pitchSlider.addEventListener('input', function() {
+                    updatePitch(randomInitPitch);
+                });
+            }
+        }
+
+        function updatePitch(randomInitPitch) {
+            if (oscillator) {
+                const cents = parseFloat(pitchSlider.value);
+                const frequencyMultiplier = Math.pow(2, cents / 1200);
+
+                const initialFrequency = randomInitPitch * frequencyMultiplier;
+
+                if (!isNaN(initialFrequency) && isFinite(initialFrequency)) {
+                    oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                    pitchValueDisplay.textContent = cents;
+
+                    const goalPitchDiv = document.getElementById('goalPitch');
+                    const goalPitchDiv2 = document.getElementById('goalPitch2');
+                    const noteRepresentation = hertzToNote(randomGoalFrequency);
+                    goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                    goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency.toFixed(2) + ' Hz';
+
+                    const currentPitchDiv = document.getElementById('currentPitch');
+                    const currentFrequency = initialFrequency.toFixed(2);
+                    currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+                }
+            }
+        }
+
+        function stopSineWave() {
+            if (oscillator) {
+                oscillator.stop(); // Stop the oscillator
+                oscillator.disconnect(); // Disconnect oscillator from audio output
+                oscillator = null;
+
+                pitchSlider.removeEventListener('input', updatePitch); // Remove event listener
+            }
+        }
+
+        function checkPitch() {
+            if (oscillator) {
+                const cents = parseFloat(pitchSlider.value);
+                const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency = randomInitPitch * frequencyMultiplier;
+
+                const goalPitchDiv = document.getElementById('goalPitch');
+                const currentPitchDiv = document.getElementById('currentPitch');
+                const resultDiv = document.getElementById('result');
+
+                const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency - initialFrequency) <= 0.4) {
+                    resultDiv.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
+                }
+            }
+        }
+
+
+
+        // Set the initial value and range of the slider
+        pitchSlider.value = 0; // Set the slider value to the center (0)
+        pitchSlider.min = -50; // Set the minimum value of the slider
+        pitchSlider.max = 50; // Set the maximum value of the slider
+    </script>
+</body>
+</html>

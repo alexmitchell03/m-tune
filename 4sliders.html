@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tune the Orchestra</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Tune the Orchestra</h1>
+    <h2>Given a note to find, put the slider in tune with the note</h2>
+    <div class="slider-container">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider1" orient="vertical" step="10">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider2" orient="vertical" step="10">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider3" orient="vertical" step="10">
+        <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider4" orient="vertical" step="10">
+    </div>
+    <div class="pitch-container">
+        <span id="pitchValue1">0</span> cents
+        <br>
+        <button onclick="playAudio1()">Play Instrument 1</button>
+        <button onclick="stopAudio1()">Stop Instrument 1</button>
+        <div id="goalPitch1">Instrument 1 Goal Pitch</div>
+        <div id="goalPitch1-2">Instrument 1 Real Goal Pitch</div>
+        <div id="currentPitch1">Instrument 1 Current Pitch</div>
+        <!--<button onclick="setMode('easy')">Easy Mode</button>-->
+        <!-- <button onclick="setMode('medium')">Medium Mode</button> -->
+        <!-- <button onclick="setMode('hard')">Hard Mode</button> -->
+        <!-- <button onclick="checkPitch()">Check Pitch</button> Button for checking user's pitch -->
+        <!-- <div id="result"></div> -->
+
+        <span id="pitchValue2">0</span> cents
+        <br>
+        <button onclick="playAudio2()">Play Instrument 2</button>
+        <button onclick="stopAudio2()">Stop Instrument 2</button>
+        <div id="goalPitch2">Instrument 2 Goal Pitch</div>
+        <div id="goalPitch2-2">Instrument 2 Real Goal Pitch</div>
+        <div id="currentPitch2">Instrument 2 Current Pitch</div>
+
+        <span id="pitchValue3">0</span> cents
+        <br>
+        <button onclick="playAudio3()">Play Instrument 3</button>
+        <button onclick="stopAudio3()">Stop Instrument 3</button>
+        <div id="goalPitch3">Instrument 3 Goal Pitch</div>
+        <div id="goalPitch3-2">Instrument 3 Real Goal Pitch</div>
+        <div id="currentPitch3">Instrument 3 Current Pitch</div>
+
+        <span id="pitchValue4">0</span> cents
+        <br>
+        <button onclick="playAudio4()">Play Instrument 4</button>
+        <button onclick="stopAudio4()">Stop Instrument 4</button>
+        <div id="goalPitch4">Instrument 4 Goal Pitch</div>
+        <div id="goalPitch4-2">Instrument 4 Real Goal Pitch</div>
+        <div id="currentPitch4">Instrument 4 Current Pitch</div>
+    </div>
+    <!-- <div id="spinner"></div> -->
+
+    <script>    
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioSources = [null, null, null, null];
+        const basePitch = 196.00; //G3 frequency
+
+        // Calculate a random goal pitch within the G3 to G5 range
+        const randomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
+        const randomGoalFrequency = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+
+        // Calculate an initial pitch within ±50 cents from the goal pitch
+        const randomInitPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+
+        function hertzToNote(hertz) {
+            const notes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+            const HERTZOFC0 = 16.35; // Lowest C note (C0) frequency in Hz
+            const OCTAVE_OFFSET = 0; // Starting octave number for representation (adjust as needed)
+
+            const halfSteps = Math.round(12 * Math.log2(hertz / HERTZOFC0));
+            const octave = Math.floor((halfSteps + 3) / 12) + OCTAVE_OFFSET;
+            const note = notes[(halfSteps + 3) % 12];
+
+            return note + octave;
+        }
+
+        function setMode(mode) {
+            const pitchSlider = document.getElementById('pitchSlider');
+            const pitchValueDisplay = document.getElementById('pitchValue');
+            const basePitch = 196.00; //G3 frequency
+            const randomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
+            const randomGoalFrequency = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+            let initialPitch = 0;
+
+            if (mode === 'easy') {
+                initialPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 10) - 5) / 120); // Multiple of 10 off the goal pitch
+                pitchSlider.step = '10'; // Set step to 10 for easy mode
+            } else if (mode === 'hard') {
+                initialPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200); // Original logic for hard mode
+                pitchSlider.step = '1'; // Set step to 1 for hard mode
+            }
+
+            pitchSlider.value = ((Math.log2(initialPitch / randomGoalFrequency)) * 1200).toFixed(2);
+            pitchValueDisplay.textContent = pitchSlider.value;
+        }
+
+
+        function playAudio() {
+            if (!audioSource) {
+                const audioFilePath = '/Alesis-Fusion-Violin-C5.wav'; // Replace with the path to your .wav file
+                const audioBufferSourceNode = audioContext.createBufferSource();
+
+                // Fetch the audio file
+                fetch(audioFilePath)
+                    .then(response => response.arrayBuffer())
+                    .then(buffer => audioContext.decodeAudioData(buffer))
+                    .then(decodedBuffer => {
+                        audioBufferSourceNode.buffer = decodedBuffer;
+                        audioBufferSourceNode.connect(audioContext.destination);
+                        audioBufferSourceNode.start();
+                        audioSource = audioBufferSourceNode;
+                    })
+                    .catch(error => console.error('Error loading audio file:', error));
+            }
+        }
+
+        function updatePitch(randomInitPitch) {
+            if (oscillator) {
+                const cents = parseFloat(pitchSlider.value);
+                const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency = randomInitPitch * frequencyMultiplier;
+
+                oscillator.frequency.setValueAtTime(initialFrequency, audioContext.currentTime);
+                pitchValueDisplay.textContent = cents; // Display cents range from -50 to 50
+
+                const goalPitchDiv = document.getElementById('goalPitch');
+                const goalPitchDiv2 = document.getElementById('goalPitch2');
+                const noteRepresentation = hertzToNote(randomGoalFrequency);
+                goalPitchDiv.textContent = 'Goal Pitch: ' + noteRepresentation;
+                goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency.toFixed(2) + ' Hz';
+                
+                const currentPitchDiv = document.getElementById('currentPitch');
+                const currentFrequency = initialFrequency.toFixed(2);
+                currentPitchDiv.textContent = 'Current Pitch: ' + currentFrequency + ' Hz';
+            }
+        }
+
+        function stopAudio() {
+            if (audioSource) {
+                audioSource.stop();
+                audioSource.disconnect();
+                audioSource = null;
+            }
+        }
+
+        function checkPitch() {
+            if (oscillator) {
+                const cents = parseFloat(pitchSlider.value);
+                const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
+
+                const initialFrequency = randomInitPitch * frequencyMultiplier;
+
+                const goalPitchDiv = document.getElementById('goalPitch');
+                const currentPitchDiv = document.getElementById('currentPitch');
+                const resultDiv = document.getElementById('result');
+
+                const differenceCents = Math.abs(1200 * Math.log2(initialFrequency / randomGoalFrequency)); // Calculate difference in cents
+
+                if (Math.abs(randomGoalFrequency - initialFrequency) <= 0.4) {
+                    resultDiv.textContent = 'Correct! You have a good ear!';
+                } else {
+                    resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
+                }
+            }
+        }
+
+        // Set the initial value and range of the slider
+        pitchSlider.value = 0; // Set the slider value to the center (0)
+        pitchSlider.min = -50; // Set the minimum value of the slider
+        pitchSlider.max = 50; // Set the maximum value of the slider
+    </script>
+</body>
+</html>
