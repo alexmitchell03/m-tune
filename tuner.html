@@ -10,6 +10,7 @@
     <h2>Given a note to find, put the slider in tune with the note</h2>
     <div class="slider-container">
         <input type="range" min="-50" max="50" value="0" class="slider" id="pitchSlider" orient="vertical" step="10">
+        <div id="notches"></div>
     </div>
     <div class="pitch-container">
         <span id="pitchValue">0</span> Cents
@@ -24,7 +25,9 @@
         <br>
         <button id="playButton" style="display: none;" style="padding-top: 30px;" onclick="playSineWave()">Play Note</button>
         <button id="stopButton" style="display: none;" style="padding-top: 30px;" onclick="stopSineWave()">Stop Note</button>
-        <button id="pitchButton" style="display: none;" onclick="checkPitch()">Check Pitch</button> <!-- Button for checking user's pitch -->
+        <button id="pitchButton" style="display: none;" onclick="checkPitch()">Check Pitch</button>
+        <br>
+        <br>
         <div id="result"></div>
     </div>
     <!-- <div id="spinner"></div> -->
@@ -35,10 +38,14 @@
         let pitchSlider = document.getElementById('pitchSlider');
         let pitchValueDisplay = document.getElementById('pitchValue');
         const basePitch = 196.00; //G3 frequency
+        let goalPitchDiv = document.getElementById('goalPitch');
+        let goalPitchDiv2 = document.getElementById('goalPitch2');
+        let currentPitchDiv = document.getElementById('currentPitch');
+        let resultDiv = document.getElementById('result');
 
         // Calculate a random goal pitch within the G3 to G5 range
-        const randomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
-        const randomGoalFrequency = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
+        let randomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
+        let randomGoalFrequency = basePitch * Math.pow(2, randomGoalNote / 12); // Corresponding frequency
 
         // Calculate an initial pitch within ±50 cents from the goal pitch
         let randomInitPitch = randomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
@@ -84,7 +91,7 @@
             pitchButton.style.display = 'inline-block';
             updatePitch(randomInitPitch);
         }
-
+        
         function playSineWave() {
             if (!oscillator) {
                 oscillator = audioContext.createOscillator();
@@ -136,6 +143,9 @@
         }
 
         function checkPitch() {
+            const playButton = document.getElementById('playButton');
+            const stopButton = document.getElementById('stopButton');
+            const pitchButton = document.getElementById('pitchButton');
             if (oscillator) {
                 const cents = parseFloat(pitchSlider.value);
                 const frequencyMultiplier = Math.pow(2, cents / 1200); // Convert slider position to frequency multiplier
@@ -153,7 +163,31 @@
                 } else {
                     resultDiv.textContent = `Incorrect. You were off by approximately ${differenceCents.toFixed(2)} cents.`;
                 }
+                setTimeout(generateNewPitch, 3000);
+                stopSineWave();
+                playButton.style.display = 'none'; // Show the Play button after mode selection
+                stopButton.style.display = 'none';
+                pitchButton.style.display = 'none';
+                pitchSlider.value = 0;
             }
+        }
+
+        function generateNewPitch() {
+            // Calculate a new random goal pitch within the G3 to G5 range
+            const newRandomGoalNote = Math.floor(Math.random() * 24); // Random note number from G3 to G5
+            const newRandomGoalFrequency = basePitch * Math.pow(2, newRandomGoalNote / 12); // Corresponding frequency
+
+            // Calculate an initial pitch within ±50 cents from the new goal pitch
+            const newRandomInitPitch = newRandomGoalFrequency * Math.pow(2, ((Math.random() * 100) - 50) / 1200);
+
+            // Update the existing randomGoalFrequency and randomInitPitch variables
+            randomGoalFrequency = newRandomGoalFrequency;
+            randomInitPitch = newRandomInitPitch;
+
+            // Update UI to reflect the new goal pitch and hide result
+            goalPitchDiv.textContent = 'Goal Pitch: ' + hertzToNote(randomGoalFrequency);
+            goalPitchDiv2.textContent = 'Real Goal Pitch: ' + randomGoalFrequency.toFixed(2) + ' Hz';
+            resultDiv.textContent = '';
         }
 
 
